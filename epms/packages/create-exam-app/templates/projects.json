@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "projects": [
+    {
+      "id": "epms",
+      "templateDir": "epms",
+      "name": "EPMS",
+      "title": "Employee Payroll Management System",
+      "description": "MongoDB + Express + React: auth, departments, employees, salary CRUD, monthly payroll report.",
+      "defaultFolderName": "epms-app",
+      "apiPort": 5000,
+      "webPort": 5173,
+      "webUrl": "http://localhost:5173"
+    },
+    {
+      "id": "sims",
+      "templateDir": "sims",
+      "name": "SIMS",
+      "title": "Stock Inventory Management System  ",
+      "description": "Spare parts, stock in, stock out (CRUD on out only), daily stock status & daily stock out reports.",
+      "defaultFolderName": "sims-app",
+      "apiPort": 5001,
+      "webPort": 5174,
+      "webUrl": "http://localhost:5174"
+    },
+    {
+      "id": "sfms",
+      "templateDir": "sfms",
+      "name": "SFMS",
+      "title": "School Fee Management System",
+      "description": "MongoDB + Express + React: auth, student CRUD, payment CRUD, date-range reports.",
+      "defaultFolderName": "sfms-app",
+      "apiPort": 5000,
+      "webPort": 5173,
+      "webUrl": "http://localhost:5173"
+    }
+  ]
+}
