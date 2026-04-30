@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+@theme {
+  --color-lms-dark: #142428;
+  --color-lms-panel: #1f363b;
+  --color-lms-paper: #ebe3d6;
+  --color-lms-accent: #c94c2d;
+  --color-lms-accent-hover: #a63d24;
+}
+
+/* Two-tone layout; no rounded corners (per LMS spec) */
+*,
+*::before,
+*::after {
+  border-radius: 0 !important;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--color-lms-dark);
+  color: var(--color-lms-paper);
+  font-family: system-ui, sans-serif;
+}
+
+@media print {
+  body {
+    background: #fff;
+    color: #000;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

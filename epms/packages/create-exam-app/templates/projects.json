@@ -33,6 +33,17 @@
       "apiPort": 5000,
       "webPort": 5173,
       "webUrl": "http://localhost:5173"
+    },
+    {
+      "id": "lms",
+      "templateDir": "lms",
+      "name": "LMS",
+      "title": "Library Management System",
+      "description": "Admin & librarian auth, students, books, borrow/return, search/filter, printable reports.",
+      "defaultFolderName": "lms-app",
+      "apiPort": 5827,
+      "webPort": 5828,
+      "webUrl": "http://localhost:5828"
     }
   ]
 }

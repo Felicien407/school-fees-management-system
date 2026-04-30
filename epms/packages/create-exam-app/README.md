@@ -21,6 +21,7 @@ npx create-exam-app my-folder
 | 1     | epms | EPMS  | Payroll, departments, employees, salary CRUD, monthly report |
 | 2     | sims | SIMS  | Spare parts, stock in, stock out (out CRUD), daily stock reports |
 | 3     | sfms | SFMS  | School fees: auth, students, payments, date-range reports |
+| 4     | lms  | LMS   | Library: admin/librarian, books, students, borrow/return, reports |
 
 The live list in the CLI is driven by `templates/projects.json` — add a `projects[]` entry and a matching `templates/<templateDir>/` folder to ship another exam.
 
@@ -37,19 +38,20 @@ npm run verify
 - `sync-epms` — copies from `epms/backend` and `epms/frontend` into `templates/epms/`
 - `sync-sims` — copies from `sims/backend` and `sims/frontend` into `templates/sims/` (expects `sims` next to `exams-p/epms` in the repo layout)
 - `sync-sfms` — copies from `sfms/backend` and `sfms/frontend` into `templates/sfms/` (expects `sfms` next to `exams-p/epms` in the repo layout)
+- `sync-lms` — copies from `lms/backend` and `lms/frontend` into `templates/lms/` (expects `lms` next to `exams-p/epms` in the repo layout)
 
 `prepack` runs `verify` so `npm pack` and `npm publish` **fail** if any `projects.json` entry has no `templates/<templateDir>` folder. Always run `sync-all` when sources change, then ship.
 
 ## Publish to npm (checklist)
 
 1. `npm run sync-all` and `npm run verify`
-2. Bump `version` in this folder’s `package.json` (semver)
+2. Bump `version` in this folder’s `package.json` (semver). **npm never allows replacing an existing version** — if publish says *403 … cannot publish over the previously published versions*, increase the version (for example `1.0.8` → `1.0.9`) and publish again.
 3. `npm pack` and inspect the tarball, or `npm publish --dry-run`
 4. `npm login` (scope registry if you use a scope)
 5. `npm publish --access public`  
    (Use `--access public` for an unscoped name like `create-exam-app` so it is installable without scope.)
 
-If publish fails in `prepack`, run `sync-all` and confirm `templates/epms`, `templates/sims`, and `templates/sfms` each exist with `backend/` and `frontend/`.
+If publish fails in `prepack`, run `sync-all` and confirm each `templates/<id>/` folder exists with `backend/` and `frontend/`.
 
 ## License
 

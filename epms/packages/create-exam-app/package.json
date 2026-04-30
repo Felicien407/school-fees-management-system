@@ -1,7 +1,7 @@
 {
   "name": "create-exam-app",
-  "version": "1.0.8",
-  "description": "Scaffold exam projects: EPMS (payroll), SIMS (stock inventory), SFMS — npx, pick a template, get backend + frontend + README + .env",
+  "version": "1.0.9",
+  "description": "Scaffold exam projects: EPMS, SIMS, SFMS, LMS — npx, pick a template, get backend + frontend + README + .env",
   "type": "module",
   "bin": {
     "create-exam-app": "bin/create-exam-app.mjs"
@@ -10,8 +10,9 @@
     "sync-epms": "node scripts/sync-template.mjs",
     "sync-sims": "node scripts/sync-sims.mjs",
     "sync-sfms": "node scripts/sync-sfms.mjs",
+    "sync-lms": "node scripts/sync-lms.mjs",
     "sync-template": "node scripts/sync-template.mjs",
-    "sync-all": "node scripts/sync-template.mjs && node scripts/sync-sims.mjs && node scripts/sync-sfms.mjs",
+    "sync-all": "node scripts/sync-template.mjs && node scripts/sync-sims.mjs && node scripts/sync-sfms.mjs && node scripts/sync-lms.mjs",
     "verify": "node scripts/verify-templates.mjs",
     "prepack": "node scripts/verify-templates.mjs"
   },
