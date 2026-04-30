@@ -1,8 +1,9 @@
 import jwt from 'jsonwebtoken';
+import { env } from '../config/env.js';
 import { User } from '../models/User.js';
 
 function jwtSecret() {
-  return process.env.JWT_SECRET || process.env.JWT_INGUFU;
+  return env.jwtSecret;
 }
 
 /** Validates Bearer JWT and attaches req.user */

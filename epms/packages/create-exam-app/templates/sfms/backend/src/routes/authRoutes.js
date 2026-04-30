@@ -1,12 +1,13 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { env } from '../config/env.js';
 import { User } from '../models/User.js';
 
 const router = Router();
 
 function jwtSecret() {
-  return process.env.JWT_SECRET || process.env.JWT_INGUFU;
+  return env.jwtSecret;
 }
 
 function signToken(user) {

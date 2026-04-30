@@ -42,7 +42,7 @@ export function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 via-slate-800 to-teal-900">
+    <div className="min-h-screen flex items-center justify-center p-4 ">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 border border-slate-100">
         <h1 className="font-display text-2xl font-bold text-sfms-ink text-center">SFMS</h1>
         <p className="text-center text-slate-500 text-sm mt-1 mb-6">

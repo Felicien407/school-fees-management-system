@@ -1,6 +1,6 @@
 {
   "name": "create-exam-app",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Scaffold exam projects: EPMS (payroll), SIMS (stock inventory), SFMS — npx, pick a template, get backend + frontend + README + .env",
   "type": "module",
   "bin": {
