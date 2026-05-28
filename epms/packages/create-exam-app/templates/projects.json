@@ -44,6 +44,17 @@
       "apiPort": 5827,
       "webPort": 5828,
       "webUrl": "http://localhost:5828"
+    },
+    {
+      "id": "sms",
+      "templateDir": "sms",
+      "name": "SMS",
+      "title": "SmartShop Sales Management System",
+      "description": "MySQL + Express + React: auth, products, customers, sales, and sales reports.",
+      "defaultFolderName": "sms-app",
+      "apiPort": 5000,
+      "webPort": 5173,
+      "webUrl": "http://localhost:5173"
     }
   ]
 }

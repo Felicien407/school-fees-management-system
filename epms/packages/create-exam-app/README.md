@@ -22,6 +22,7 @@ npx create-exam-app my-folder
 | 2     | sims | SIMS  | Spare parts, stock in, stock out (out CRUD), daily stock reports |
 | 3     | sfms | SFMS  | School fees: auth, students, payments, date-range reports |
 | 4     | lms  | LMS   | Library: admin/librarian, books, students, borrow/return, reports |
+| 5     | sms  | SMS   | SmartShop: auth, products, customers, sales, and reports |
 
 The live list in the CLI is driven by `templates/projects.json` — add a `projects[]` entry and a matching `templates/<templateDir>/` folder to ship another exam.
 
@@ -39,6 +40,7 @@ npm run verify
 - `sync-sims` — copies from `sims/backend` and `sims/frontend` into `templates/sims/` (expects `sims` next to `exams-p/epms` in the repo layout)
 - `sync-sfms` — copies from `sfms/backend` and `sfms/frontend` into `templates/sfms/` (expects `sfms` next to `exams-p/epms` in the repo layout)
 - `sync-lms` — copies from `lms/backend` and `lms/frontend` into `templates/lms/` (expects `lms` next to `exams-p/epms` in the repo layout)
+- `sync-sms` — copies from `smartshop(sms)/backend` and `smartshop(sms)/frontend` into `templates/sms/` (expects `smartshop(sms)` next to `exams-p/epms` in the repo layout)
 
 `prepack` runs `verify` so `npm pack` and `npm publish` **fail** if any `projects.json` entry has no `templates/<templateDir>` folder. Always run `sync-all` when sources change, then ship.
 
