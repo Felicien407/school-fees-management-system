@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-50: #f6fbf7;
+  --color-brand-100: #e4f0e5;
+  --color-brand-700: #2f6d42;
+  --color-brand-800: #1f4f2f;
+  --color-brand-900: #153a23;
+  --color-accent-500: #e1b94f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background: #f6fbf7;
+  color: #163123;
+}
+
+button,
+input,
+select,
+textarea {
+  border-radius: 0 !important;
+}

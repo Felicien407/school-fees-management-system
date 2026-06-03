@@ -1,0 +1,7 @@
+CREATE DATABASE IF NOT EXISTS EPMS;
+USE EPMS;
+CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(50) NOT NULL UNIQUE, email VARCHAR(120) NOT NULL UNIQUE, password VARCHAR(255) NOT NULL);
+CREATE TABLE IF NOT EXISTS departments (department_code VARCHAR(30) PRIMARY KEY, department_name VARCHAR(100) NOT NULL);
+CREATE TABLE IF NOT EXISTS employees (employee_number VARCHAR(30) PRIMARY KEY, first_name VARCHAR(60) NOT NULL, last_name VARCHAR(60) NOT NULL, address VARCHAR(255) NOT NULL, position VARCHAR(80) NOT NULL, telephone VARCHAR(20) NOT NULL, gender VARCHAR(20) NOT NULL, hired_date DATE NOT NULL, department_code VARCHAR(30) NOT NULL, FOREIGN KEY (department_code) REFERENCES departments(department_code));
+CREATE TABLE IF NOT EXISTS salaries (salary_id INT AUTO_INCREMENT PRIMARY KEY, gross_salary DECIMAL(12,2) NOT NULL, total_deduction DECIMAL(12,2) NOT NULL, net_salary DECIMAL(12,2) NOT NULL, month_of_payment VARCHAR(30) NOT NULL, employee_number VARCHAR(30) NOT NULL, FOREIGN KEY (employee_number) REFERENCES employees(employee_number));
+INSERT INTO users (username, email, password) VALUES ('admin', 'admin@exam.local', '$2b$10$aULsUjp9bb9lf5CZZyY.7./KhwsocVO0duyPlqu0Qnte75xHBdG5C') ON DUPLICATE KEY UPDATE username = username;
