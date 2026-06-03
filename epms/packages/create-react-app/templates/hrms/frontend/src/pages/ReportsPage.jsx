@@ -6,11 +6,10 @@ import {
 } from "../components/ui.jsx";
 
 const today = () => new Date().toISOString().slice(0, 10);
-
 const fmt = (d) => (d ? String(d).slice(0, 10) : "—");
 
 export default function ReportsPage() {
-  const [tab, setTab] = useState("date-range");
+  const [tab, setTab] = useState("on-leave");
   const [startDate, setStartDate] = useState(today());
   const [endDate, setEndDate] = useState(today());
   const [rangeData, setRangeData] = useState(null);
@@ -33,7 +32,7 @@ export default function ReportsPage() {
     }
   };
 
-  const loadDateRangeReport = async () => {
+  const loadByDate = async () => {
     setError("");
     if (!startDate || !endDate) {
       setError("Select start date and end date.");
@@ -56,25 +55,28 @@ export default function ReportsPage() {
     }
   };
 
-  const generate = () => (tab === "on-leave" ? loadOnLeave() : loadDateRangeReport());
+  const generate = () => (tab === "on-leave" ? loadOnLeave() : loadByDate());
 
   const employees = rangeData?.reports?.employees || [];
 
   return (
     <div>
-      <PageHeader title="Reports" subtitle="On-leave status report and employee reports by date range" />
+      <PageHeader
+        title="Reports"
+        subtitle="Employee status report (exam) and employees hired by date range"
+      />
 
       <Tabs
         active={tab}
         onChange={setTab}
         tabs={[
-          { id: "date-range", label: "Date range report" },
           { id: "on-leave", label: "On leave by department" },
+          { id: "by-date", label: "Report by date" },
         ]}
       />
 
       <Card className="mt-4 p-4 space-y-3">
-        {tab === "date-range" && (
+        {tab === "by-date" && (
           <div className="grid gap-3 sm:grid-cols-2 max-w-lg">
             <Field label="Start date">
               <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
@@ -82,10 +84,15 @@ export default function ReportsPage() {
             <Field label="End date">
               <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
             </Field>
+            <p className="sm:col-span-2 text-sm text-muted">
+              Lists employees whose <strong>hire date</strong> falls between the selected dates.
+            </p>
           </div>
         )}
         {tab === "on-leave" && (
-          <p className="text-sm text-muted">Employees with status &quot;On Leave&quot;, grouped by department.</p>
+          <p className="text-sm text-muted">
+            Employee Status Report: only employees with status &quot;On Leave&quot;, grouped by department with totals.
+          </p>
         )}
         <Button type="button" variant="primary" onClick={generate} disabled={loading}>
           {loading ? "Loading…" : "Generate report"}
@@ -94,7 +101,7 @@ export default function ReportsPage() {
 
       {error && <Alert type="error" className="mt-4">{error}</Alert>}
 
-      {tab === "date-range" && rangeData && (
+      {tab === "by-date" && rangeData && (
         <div className="mt-4 space-y-4">
           <p className="text-sm">
             <strong className="text-primary">Period:</strong> {fmt(rangeData.startDate)} to {fmt(rangeData.endDate)}
@@ -153,6 +160,8 @@ export default function ReportsPage() {
       {tab === "on-leave" && onLeaveData && (
         <div className="mt-4 space-y-4">
           <p className="text-sm">
+            <strong className="text-primary">Report:</strong> {onLeaveData.reportTitle || "On Leave"}
+            {" · "}
             <strong className="text-primary">Total on leave:</strong> {onLeaveData.grandTotal}
           </p>
           {(onLeaveData.departments || []).length === 0 ? (
@@ -160,7 +169,10 @@ export default function ReportsPage() {
           ) : (
             onLeaveData.departments.map((dept) => (
               <Card key={dept.departmentId}>
-                <CardHeader title={dept.departmentName} action={<span className="text-sm text-primary">{dept.totalOnLeave} on leave</span>} />
+                <CardHeader
+                  title={dept.departmentName}
+                  action={<span className="text-sm text-primary">{dept.totalOnLeave} on leave</span>}
+                />
                 <DataTable
                   columns={[
                     { key: "name", label: "Employee", render: (r) => r.employeeName },

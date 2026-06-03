@@ -1,34 +1,38 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import api from "../api/client.js";
+import { isAdmin } from "../constants/permissions.js";
 
 const AuthContext = createContext(null);
 
+const normalizeUser = (user) => {
+  if (!user) return null;
+  const role = user.role || (user.employeeId ? "employee" : "admin");
+  return { ...user, role };
+};
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const savedUser = localStorage.getItem("hrms_user");
-    const savedToken = localStorage.getItem("hrms_token");
-    if (savedUser && savedToken) {
-      setUser(JSON.parse(savedUser));
-      setToken(savedToken);
-      api.get("/auth/me").catch(() => {
+    api
+      .get("/auth/me")
+      .then(({ data }) => {
+        const refreshed = normalizeUser(data.user);
+        setUser(refreshed);
+        if (refreshed) localStorage.setItem("hrms_user", JSON.stringify(refreshed));
+      })
+      .catch(() => {
         setUser(null);
-        setToken(null);
         localStorage.removeItem("hrms_user");
-        localStorage.removeItem("hrms_token");
-      });
-    }
-    setLoading(false);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
-  const login = (userData, authToken) => {
-    setUser(userData);
-    setToken(authToken);
-    localStorage.setItem("hrms_user", JSON.stringify(userData));
-    localStorage.setItem("hrms_token", authToken);
+  const login = (userData) => {
+    const normalized = normalizeUser(userData);
+    setUser(normalized);
+    localStorage.setItem("hrms_user", JSON.stringify(normalized));
   };
 
   const logout = async () => {
@@ -38,13 +42,20 @@ export function AuthProvider({ children }) {
       /* session may already be gone */
     }
     setUser(null);
-    setToken(null);
     localStorage.removeItem("hrms_user");
-    localStorage.removeItem("hrms_token");
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, loading, isAuthenticated: !!token }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        logout,
+        loading,
+        isAuthenticated: !!user,
+        isAdmin: isAdmin(user),
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

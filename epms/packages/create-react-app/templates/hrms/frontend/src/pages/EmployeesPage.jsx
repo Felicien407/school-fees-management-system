@@ -15,7 +15,7 @@ const emptyForm = {
   empTelephone: "",
   empAddress: "",
   empHireDate: "",
-  empStatus: "Active",
+  empStatus: "",
   departmentId: "",
   positionId: "",
 };
@@ -31,6 +31,7 @@ const validateEmployee = (form, departments, positions) => {
   if (!form.empTelephone.trim()) errors.empTelephone = "Telephone is required.";
   if (!form.empAddress.trim()) errors.empAddress = "Address is required.";
   if (!form.empHireDate) errors.empHireDate = "Hire date is required.";
+  if (!form.empStatus) errors.empStatus = "Select employment status.";
   if (!form.departmentId) errors.departmentId = "Select a department.";
   else if (!departments.some((d) => String(d.department_id) === String(form.departmentId))) {
     errors.departmentId = "Selected department is not valid.";
@@ -51,7 +52,7 @@ const rowToForm = (row) => ({
   empTelephone: row.emp_telephone || "",
   empAddress: row.emp_address || "",
   empHireDate: row.emp_hire_date ? String(row.emp_hire_date).slice(0, 10) : "",
-  empStatus: row.emp_status || "Active",
+  empStatus: row.emp_status || "",
   departmentId: String(row.department_id || ""),
   positionId: String(row.position_id || ""),
 });
@@ -225,8 +226,9 @@ export default function EmployeesPage() {
           <Field label="Hire date" error={fieldErrors.empHireDate}>
             <Input type="date" value={form.empHireDate} onChange={(e) => setField("empHireDate", e.target.value)} error={fieldErrors.empHireDate} />
           </Field>
-          <Field label="Status">
-            <Select value={form.empStatus} onChange={(e) => setField("empStatus", e.target.value)}>
+          <Field label="Status" error={fieldErrors.empStatus}>
+            <Select value={form.empStatus} onChange={(e) => setField("empStatus", e.target.value)} error={fieldErrors.empStatus}>
+              <option value="">Select status</option>
               {EMPLOYEE_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
             </Select>
           </Field>

@@ -14,7 +14,7 @@ export default function DashboardPage() {
 
   const cards = [
     { label: "Total Employees", value: stats?.employees ?? "—", to: "/employees", tone: "bg-orange-50 text-orange-900" },
-    { label: "Active Employees", value: stats?.activeEmployees ?? "—", to: "/employees", tone: "bg-amber-50 text-amber-900" },
+    { label: "On Leave", value: stats?.onLeaveEmployees ?? "—", to: "/reports", tone: "bg-amber-50 text-amber-900" },
     { label: "Departments", value: stats?.departments ?? "—", to: "/departments", tone: "bg-yellow-50 text-yellow-900" },
     { label: "Positions", value: stats?.positions ?? "—", to: "/positions", tone: "bg-stone-50 text-stone-900" },
     { label: "User Accounts", value: stats?.users ?? "—", to: "/users", tone: "bg-red-50 text-red-900" },
@@ -48,7 +48,7 @@ export default function DashboardPage() {
         <h3 className="font-semibold text-ink">Quick start</h3>
         <ol className="mt-3 text-sm text-muted space-y-2 list-decimal list-inside">
           <li>Add departments and positions first</li>
-          <li>Register employees and assign department & position</li>
+          <li>Add employees and assign department & position (HR admin)</li>
           <li>Create user accounts linked to employees</li>
           <li>Generate reports from the Reports menu</li>
         </ol>

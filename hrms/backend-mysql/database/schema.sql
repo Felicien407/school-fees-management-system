@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS employees (
   emp_telephone VARCHAR(20) NOT NULL,
   emp_address VARCHAR(255) NOT NULL,
   emp_hire_date DATE NOT NULL,
-  emp_status ENUM('Active', 'On Leave', 'Left', 'Blacklisted', 'Deceased', 'On Mission') NOT NULL DEFAULT 'Active',
+  emp_status ENUM('On Leave', 'Left', 'Blacklisted', 'Deceased', 'On Mission') NOT NULL,
   department_id INT NOT NULL,
   position_id INT NOT NULL,
   FOREIGN KEY (department_id) REFERENCES departments(department_id),

@@ -22,8 +22,8 @@ const validateBody = async (b, employeeId = null) => {
   if (!b.empTelephone) return "Telephone is required.";
   if (!b.empAddress) return "Address is required.";
   if (!b.empHireDate) return "Hire date is required.";
-  const status = b.empStatus || "Active";
-  if (!ALLOWED_STATUSES.includes(status)) return "Select a valid employment status.";
+  if (!b.empStatus) return "Employment status is required.";
+  if (!ALLOWED_STATUSES.includes(b.empStatus)) return "Select a valid employment status.";
   if (!b.departmentId) return "Select a department from the list.";
   if (!b.positionId) return "Select a position from the list.";
   const dept = await query("SELECT department_id FROM departments WHERE department_id = ?", [b.departmentId]);
@@ -42,10 +42,9 @@ export const create = async (req, res) => {
     const err = await validateBody(req.body);
     if (err) return res.status(400).json({ message: err });
     const b = req.body;
-    const status = b.empStatus || "Active";
     await query(
       `INSERT INTO employees (emp_first_name, emp_last_name, emp_gender, emp_date_of_birth, emp_email, emp_telephone, emp_address, emp_hire_date, emp_status, department_id, position_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [b.empFirstName.trim(), b.empLastName.trim(), b.empGender, b.empDateOfBirth, b.empEmail.trim().toLowerCase(), b.empTelephone.trim(), b.empAddress.trim(), b.empHireDate, status, b.departmentId, b.positionId]
+      [b.empFirstName.trim(), b.empLastName.trim(), b.empGender, b.empDateOfBirth, b.empEmail.trim().toLowerCase(), b.empTelephone.trim(), b.empAddress.trim(), b.empHireDate, b.empStatus, b.departmentId, b.positionId]
     );
     return res.status(201).json({ message: "Employee added successfully." });
   } catch (error) {
@@ -99,7 +98,7 @@ export const update = async (req, res) => {
       `UPDATE employees SET emp_first_name = ?, emp_last_name = ?, emp_gender = ?, emp_date_of_birth = ?,
         emp_email = ?, emp_telephone = ?, emp_address = ?, emp_hire_date = ?, emp_status = ?,
         department_id = ?, position_id = ? WHERE employee_id = ?`,
-      [b.empFirstName.trim(), b.empLastName.trim(), b.empGender, b.empDateOfBirth, b.empEmail.trim().toLowerCase(), b.empTelephone.trim(), b.empAddress.trim(), b.empHireDate, b.empStatus || "Active", b.departmentId, b.positionId, req.params.id]
+      [b.empFirstName.trim(), b.empLastName.trim(), b.empGender, b.empDateOfBirth, b.empEmail.trim().toLowerCase(), b.empTelephone.trim(), b.empAddress.trim(), b.empHireDate, b.empStatus, b.departmentId, b.positionId, req.params.id]
     );
     if (!result.affectedRows) return res.status(404).json({ message: "Employee not found." });
     return res.json({ message: "Employee updated successfully." });
@@ -128,5 +127,39 @@ export const getAvailableForUser = async (_req, res) => {
     return res.json(await query(`SELECT e.employee_id, e.emp_first_name, e.emp_last_name, e.emp_email FROM employees e LEFT JOIN users u ON e.employee_id = u.employee_id WHERE u.employee_id IS NULL ORDER BY e.emp_last_name, e.emp_first_name`));
   } catch {
     return res.status(500).json({ message: "Failed to fetch available employees." });
+  }
+};
+
+export const getMe = async (req, res) => {
+  try {
+    const employeeId = req.session?.user?.employeeId ?? req.user?.employeeId;
+    if (!employeeId) {
+      return res.status(403).json({ message: "This account is not linked to an employee record." });
+    }
+    const rows = await query(`${employeeSelect} WHERE e.employee_id = ?`, [employeeId]);
+    if (!rows.length) return res.status(404).json({ message: "Your employee record was not found." });
+    return res.json(rows[0]);
+  } catch {
+    return res.status(500).json({ message: "Failed to load your profile." });
+  }
+};
+
+export const updateMe = async (req, res) => {
+  try {
+    const employeeId = req.session?.user?.employeeId ?? req.user?.employeeId;
+    if (!employeeId) {
+      return res.status(403).json({ message: "This account is not linked to an employee record." });
+    }
+    const { empTelephone, empAddress } = req.body;
+    if (!empTelephone?.trim()) return res.status(400).json({ message: "Telephone is required." });
+    if (!empAddress?.trim()) return res.status(400).json({ message: "Address is required." });
+    const result = await query(
+      "UPDATE employees SET emp_telephone = ?, emp_address = ? WHERE employee_id = ?",
+      [empTelephone.trim(), empAddress.trim(), employeeId]
+    );
+    if (!result.affectedRows) return res.status(404).json({ message: "Your employee record was not found." });
+    return res.json({ message: "Your profile was updated successfully." });
+  } catch {
+    return res.status(500).json({ message: "Failed to update your profile." });
   }
 };

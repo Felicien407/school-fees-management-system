@@ -1,19 +1,6 @@
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import { query } from "../config/db.js";
-
-const signToken = (user) =>
-  jwt.sign(
-    { id: user.user_id, username: user.user_name },
-    process.env.JWT_SECRET || "dev_secret_change_in_production",
-    { expiresIn: "8h" }
-  );
-
-const sessionUser = (user) => ({
-  id: user.user_id,
-  username: user.user_name,
-  employeeId: user.employee_id,
-});
+import { toAuthUser } from "../utils/userRole.js";
 
 export const login = async (req, res) => {
   try {
@@ -27,14 +14,13 @@ export const login = async (req, res) => {
     const match = await bcrypt.compare(password, user.password);
     if (!match) return res.status(401).json({ message: "Invalid credentials." });
 
-    const profile = sessionUser(user);
+    const profile = toAuthUser(user);
     req.session.user = profile;
 
     return res.json({
       message: "Login successful.",
-      token: signToken(user),
       user: profile,
-      auth: { jwt: true, session: true },
+      auth: { session: true },
     });
   } catch {
     return res.status(500).json({ message: "Server error during login." });
@@ -50,10 +36,12 @@ export const logout = (req, res) => {
 };
 
 export const me = (req, res) => {
-  if (!req.session?.user && !req.user) {
-    return res.status(401).json({ message: "Not authenticated." });
-  }
-  return res.json({ user: req.session?.user || req.user });
+  const raw = req.session?.user || req.user;
+  if (!raw) return res.status(401).json({ message: "Not authenticated." });
+  const user = raw.role
+    ? raw
+    : { ...raw, role: raw.employeeId ? "employee" : "admin" };
+  return res.json({ user });
 };
 
 export const forgotPassword = async (req, res) => {

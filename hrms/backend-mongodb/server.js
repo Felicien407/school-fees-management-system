@@ -4,6 +4,7 @@ import session from "express-session";
 import dotenv from "dotenv";
 import { connectDatabase } from "./config/db.js";
 import auth from "./middleware/auth.js";
+import requireAdmin from "./middleware/requireAdmin.js";
 import authRoutes from "./routes/authRoutes.js";
 import departmentRoutes from "./routes/departmentRoutes.js";
 import positionRoutes from "./routes/positionRoutes.js";
@@ -40,12 +41,12 @@ app.get("/api/health", (_req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
-app.use("/api/dashboard", auth, dashboardRoutes);
-app.use("/api/departments", auth, departmentRoutes);
-app.use("/api/positions", auth, positionRoutes);
+app.use("/api/dashboard", auth, requireAdmin, dashboardRoutes);
+app.use("/api/departments", auth, requireAdmin, departmentRoutes);
+app.use("/api/positions", auth, requireAdmin, positionRoutes);
 app.use("/api/employees", auth, employeeRoutes);
-app.use("/api/users", auth, userRoutes);
-app.use("/api/reports", auth, reportRoutes);
+app.use("/api/users", auth, requireAdmin, userRoutes);
+app.use("/api/reports", auth, requireAdmin, reportRoutes);
 
 app.use((err, _req, res, _next) => {
   res.status(500).json({ message: err.message || "Server error" });

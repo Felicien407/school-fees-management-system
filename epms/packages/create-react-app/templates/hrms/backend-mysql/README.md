@@ -46,7 +46,7 @@ erDiagram
   }
 ```
 
-`emp_status`: Active, On Leave, Left, Blacklisted, Deceased, On Mission
+`emp_status`: On Leave, Left, Blacklisted, Deceased, On Mission
 
 ### Relationships
 
@@ -84,8 +84,7 @@ See the main [HRMS README](../README.md#level-0-dfd--context-diagram) for the fu
 
 ## Authentication
 
-- **Session**: `express-session` cookie `hrms.sid` after login.
-- **JWT**: Bearer token in `Authorization` header (8h expiry).
+- **Session**: `express-session` cookie `hrms.sid` after login (exam requirement).
 - Middleware accepts either mechanism.
 
 ## Setup

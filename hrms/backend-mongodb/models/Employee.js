@@ -10,7 +10,7 @@ const schema = new mongoose.Schema({
   emp_telephone: { type: String, required: true },
   emp_address: { type: String, required: true },
   emp_hire_date: { type: Date, required: true },
-  emp_status: { type: String, required: true, enum: ["Active", "On Leave", "Left", "Blacklisted", "Deceased", "On Mission"], default: "Active" },
+  emp_status: { type: String, required: true, enum: ["On Leave", "Left", "Blacklisted", "Deceased", "On Mission"] },
   department_id: { type: Number, required: true },
   position_id: { type: Number, required: true },
 }, { collection: "employees" });

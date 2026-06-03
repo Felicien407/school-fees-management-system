@@ -1,17 +1,23 @@
 import { useState } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import api, { getApiError } from "../api/client.js";
 import { useAuth } from "../context/AuthContext.jsx";
+import { isEmployee } from "../constants/permissions.js";
 import AuthShell from "../components/AuthShell.jsx";
 import { Button, Field, Input } from "../components/ui.jsx";
 
 export default function LoginPage() {
+  const navigate = useNavigate();
   const { login, isAuthenticated, loading } = useAuth();
   const [form, setForm] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
 
   if (loading) return null;
-  if (isAuthenticated) return <Navigate to="/" replace />;
+  if (isAuthenticated) {
+    const saved = localStorage.getItem("hrms_user");
+    const u = saved ? JSON.parse(saved) : null;
+    return <Navigate to={isEmployee(u) ? "/my-profile" : "/"} replace />;
+  }
 
   const submit = async (e) => {
     e.preventDefault();
@@ -22,7 +28,9 @@ export default function LoginPage() {
     }
     try {
       const { data } = await api.post("/auth/login", form);
-      login(data.user, data.token);
+      login(data.user);
+      const employee = data.user?.role === "employee" || data.user?.employeeId;
+      navigate(employee ? "/my-profile" : "/", { replace: true });
     } catch (err) {
       setError(getApiError(err, "Login failed."));
     }
@@ -52,6 +60,11 @@ export default function LoginPage() {
           Forgot password?
         </Link>
       </form>
+      <p className="mt-4 pt-4 border-t border-border text-xs text-muted leading-relaxed">
+        <strong className="text-text">No registration page?</strong> The exam requires session-based login only.
+        HR creates accounts under <strong>Users</strong> (linked to an employee record). Public self-sign-up is not
+        part of the specification and would let anyone create access without HR approval.
+      </p>
     </AuthShell>
   );
 }

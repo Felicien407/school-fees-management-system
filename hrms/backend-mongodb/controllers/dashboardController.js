@@ -5,10 +5,14 @@ import User from "../models/User.js";
 
 export const getStats = async (_req, res) => {
   try {
-    const [employees, departments, positions, users, activeEmployees] = await Promise.all([
-      Employee.countDocuments(), Department.countDocuments(), Position.countDocuments(), User.countDocuments(), Employee.countDocuments({ emp_status: "Active" }),
+    const [employees, departments, positions, users, onLeaveEmployees] = await Promise.all([
+      Employee.countDocuments(),
+      Department.countDocuments(),
+      Position.countDocuments(),
+      User.countDocuments(),
+      Employee.countDocuments({ emp_status: "On Leave" }),
     ]);
-    return res.json({ employees, departments, positions, users, activeEmployees });
+    return res.json({ employees, departments, positions, users, onLeaveEmployees });
   } catch {
     return res.status(500).json({ message: "Failed to load dashboard stats." });
   }

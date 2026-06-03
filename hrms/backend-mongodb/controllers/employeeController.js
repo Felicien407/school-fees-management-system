@@ -29,8 +29,8 @@ const validateBody = async (b, employeeId = null) => {
   if (!b.empTelephone) return "Telephone is required.";
   if (!b.empAddress) return "Address is required.";
   if (!b.empHireDate) return "Hire date is required.";
-  const status = b.empStatus || "Active";
-  if (!ALLOWED_STATUSES.includes(status)) return "Select a valid employment status.";
+  if (!b.empStatus) return "Employment status is required.";
+  if (!ALLOWED_STATUSES.includes(b.empStatus)) return "Select a valid employment status.";
   if (!b.departmentId) return "Select a department from the list.";
   if (!b.positionId) return "Select a position from the list.";
   if (!(await Department.findOne({ department_id: Number(b.departmentId) }))) return "Selected department does not exist.";
@@ -55,7 +55,7 @@ export const create = async (req, res) => {
       emp_telephone: b.empTelephone.trim(),
       emp_address: b.empAddress.trim(),
       emp_hire_date: b.empHireDate,
-      emp_status: b.empStatus || "Active",
+      emp_status: b.empStatus,
       department_id: Number(b.departmentId),
       position_id: Number(b.positionId),
     });
@@ -122,7 +122,7 @@ export const update = async (req, res) => {
         emp_telephone: b.empTelephone.trim(),
         emp_address: b.empAddress.trim(),
         emp_hire_date: b.empHireDate,
-        emp_status: b.empStatus || "Active",
+        emp_status: b.empStatus,
         department_id: Number(b.departmentId),
         position_id: Number(b.positionId),
       },
@@ -159,5 +159,37 @@ export const getAvailableForUser = async (_req, res) => {
     );
   } catch {
     return res.status(500).json({ message: "Failed to fetch available employees." });
+  }
+};
+
+export const getMe = async (req, res) => {
+  try {
+    const employeeId = req.session?.user?.employeeId ?? req.user?.employeeId;
+    if (!employeeId) return res.status(403).json({ message: "This account is not linked to an employee record." });
+    const emp = await Employee.findOne({ employee_id: Number(employeeId) }).lean();
+    if (!emp) return res.status(404).json({ message: "Your employee record was not found." });
+    const [enriched] = await enrich([emp]);
+    return res.json(enriched);
+  } catch {
+    return res.status(500).json({ message: "Failed to load your profile." });
+  }
+};
+
+export const updateMe = async (req, res) => {
+  try {
+    const employeeId = req.session?.user?.employeeId ?? req.user?.employeeId;
+    if (!employeeId) return res.status(403).json({ message: "This account is not linked to an employee record." });
+    const { empTelephone, empAddress } = req.body;
+    if (!empTelephone?.trim()) return res.status(400).json({ message: "Telephone is required." });
+    if (!empAddress?.trim()) return res.status(400).json({ message: "Address is required." });
+    const updated = await Employee.findOneAndUpdate(
+      { employee_id: Number(employeeId) },
+      { emp_telephone: empTelephone.trim(), emp_address: empAddress.trim() },
+      { new: true }
+    );
+    if (!updated) return res.status(404).json({ message: "Your employee record was not found." });
+    return res.json({ message: "Your profile was updated successfully." });
+  } catch {
+    return res.status(500).json({ message: "Failed to update your profile." });
   }
 };
